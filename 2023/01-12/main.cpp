@@ -2,12 +2,13 @@
 #include <functional>
 #include <iostream>
 #include <string>
+#include "../main.hpp"
 
 using std::cout, std::cin, std::endl, std::string;
 
 int main() {
 
-    std::ifstream myfile("input.txt");
+    file myfile("input.txt");
     if (!myfile) {
         std::cerr << "Input file cannot be opened for reading.\n";
 
@@ -15,13 +16,12 @@ int main() {
     }
     int sum{0};
 
-    while (myfile) {
+    while (myfile.getfile()) {
         string line;
-        myfile >> line;
+        myfile.getfile() >> line;
         if (line.empty()) {
             break;
         }
-
         string strnum;
         strnum.push_back(*std::find_if(line.begin(), line.end(),
                                        [](char c) { return isdigit(c); }));
@@ -30,7 +30,5 @@ int main() {
         sum += std::stoi(strnum);
     }
     std::cout << sum << "\n";
-
-    myfile.close();
     return 0;
 }
