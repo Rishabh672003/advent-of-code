@@ -21,24 +21,22 @@ def part2(text: list[list[int]]):
             text.remove(line)
 
     for line in text:
-        for i, curr in enumerate(line):
-            del line[i]
-            diffs2: list[int] = [line[i] - line[i - 1] for i in range(1, len(line))]
+        for i, _ in enumerate(line):
+            cur = line[:i] + line[i+1:]
+            diffs2: list[int] = [cur[i] - cur[i - 1] for i in range(1, len(cur))]
             if all(d > 0 and d <= 3 for d in diffs2):
                 no_of_safe += 1
                 break
             elif all(d < 0 and d >= -3 for d in diffs2):
                 no_of_safe += 1
                 break
-            else:
-                line.insert(i, curr)
 
     return no_of_safe
 
 
 if __name__ == "__main__":
     text: list[list[int]] = []
-    with open("input.txt") as file:
+    with open("2024/day2/input.txt") as file:
         for line in file:
             text.append(list(map(int, line.split())))
 
