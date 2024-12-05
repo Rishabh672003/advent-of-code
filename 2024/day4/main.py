@@ -5,7 +5,6 @@ def part1(text: list[str]):
     for i in range(0, ROW):
         for j in range(0, COLUMN):
             if text[i][j] == "X":
-                # X down
                 if i + 3 <= ROW - 1:
                     if (
                         text[i + 1][j] == "M"
