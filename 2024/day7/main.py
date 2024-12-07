@@ -1,77 +1,66 @@
 import itertools
-import numpy as np
+
 
 def part1(lists: list[tuple[int, list[int]]]):
+    operators = ["+", "*"]
     count = 0
     for res, numbers in lists:
-        numbers = np.array(numbers)
-        num_ops = len(numbers) - 1
-        total_combinations = 2 ** num_ops
+        op_combinations = list(itertools.product(operators, repeat=len(numbers) - 1))
 
-        # Generate all possible operator combinations (0: '+', 1: '*')
-        operator_codes = np.array(list(itertools.product([0, 1], repeat=num_ops)), dtype=np.int8)
-
-        # Initialize results array
-        results = np.full(total_combinations, numbers[0], dtype=np.int64)
-
-        for i in range(num_ops):
-            op_codes = operator_codes[:, i]
-            next_number = numbers[i + 1]
-
-            # Apply operation based on operator code
-            results = np.where(
-                op_codes == 0,
-                results + next_number,
-                results * next_number
+        for ops in op_combinations:
+            expression = " ".join(
+                str(numbers[i]) + " " + ops[i] if i < len(ops) else str(numbers[i])
+                for i in range(len(numbers))
             )
-
-        # Check if any result matches the target
-        if np.any(results == res):
-            count += res
+            tokens = expression.split()
+            result = int(tokens[0])
+            for i in range(1, len(tokens), 2):
+                operator = tokens[i]
+                number = int(tokens[i + 1])
+                if operator == "*":
+                    result *= number
+                else:
+                    result += number
+            if result == res:
+                count += res
+                break
 
     print(count)
+
 
 def part2(lists: list[tuple[int, list[int]]]):
+    operators = ["+", "*", "||"]
     count = 0
     for res, numbers in lists:
-        numbers = np.array(numbers, dtype=object)
-        num_ops = len(numbers) - 1
-        total_combinations = 3 ** num_ops
+        op_combinations = list(itertools.product(operators, repeat=len(numbers) - 1))
 
-        # Generate all possible operator combinations (0: '+', 1: '*', 2: '||')
-        operator_codes = np.array(list(itertools.product([0, 1, 2], repeat=num_ops)), dtype=np.int8)
-
-        # Initialize results array
-        results = np.full(total_combinations, numbers[0], dtype=object)
-
-        for i in range(num_ops):
-            op_codes = operator_codes[:, i]
-            next_number = numbers[i + 1]
-
-            # Apply addition
-            add_mask = op_codes == 0
-            results[add_mask] = results[add_mask] + next_number
-
-            # Apply multiplication
-            mul_mask = op_codes == 1
-            results[mul_mask] = results[mul_mask] * next_number
-
-            # Apply concatenation
-            concat_mask = op_codes == 2
-            results[concat_mask] = results[concat_mask].astype(str) + str(next_number)
-            results[concat_mask] = results[concat_mask].astype(int)
-
-        # Convert results to integers for comparison
-        final_results = results.astype(int)
-
-        # Check if any result matches the target
-        if np.any(final_results == res):
-            count += res
+        for ops in op_combinations:
+            expression = " ".join(
+                str(numbers[i]) + " " + ops[i] if i < len(ops) else str(numbers[i])
+                for i in range(len(numbers))
+            )
+            tokens = expression.split()
+            result = int(tokens[0])
+            for i in range(1, len(tokens), 2):
+                operator = tokens[i]
+                number = int(tokens[i + 1])
+                if result == res or result > res:
+                    break
+                if operator == "*":
+                    result *= number
+                elif operator == "+":
+                    result += number
+                elif operator == "||":
+                    result = int(str(result) + str(number))
+            if result == res:
+                count+=res
+                break
 
     print(count)
 
+
 if __name__ == "__main__":
-    lines: list[tuple[int, np.ndarray]] = []
+    lines: list[tuple[int, list[int]]] = []
     with open("2024/day7/input.txt") as file:
         for i in file:
             a, b = i.split(":", 2)
