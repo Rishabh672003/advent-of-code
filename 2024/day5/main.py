@@ -5,6 +5,7 @@ wrong_updates: list[list[int]] = []
 
 def part1(rules: list[list[int]], updates: list[list[int]]):
     next_map: dict[int, set[int]] = defaultdict(set[int])
+
     for i in rules:
         a, b = i
         next_map[a].add(b)
